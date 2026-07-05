@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Pencil, Trash2, Plus, X } from "lucide-react";
 import { productApi, categoryApi } from "@/api/services";
 import type { Category, Product } from "@/types";
+import { formatCurrency } from "@/utils/currency";
 
 interface FormState {
   name: string;
@@ -185,7 +186,7 @@ export default function AdminProducts() {
               required
               type="number"
               step="0.01"
-              placeholder="Price"
+              placeholder="Price (in ₹)"
               value={form.price}
               onChange={(e) => setForm({ ...form, price: e.target.value })}
               className="rounded-md border border-neutral-300 px-3 py-2 text-sm"
@@ -193,7 +194,7 @@ export default function AdminProducts() {
             <input
               type="number"
               step="0.01"
-              placeholder="Discount price (optional)"
+              placeholder="Discount price (optional, in ₹)"
               value={form.discountPrice}
               onChange={(e) => setForm({ ...form, discountPrice: e.target.value })}
               className="rounded-md border border-neutral-300 px-3 py-2 text-sm"
@@ -248,7 +249,7 @@ export default function AdminProducts() {
                 <tr key={p._id} className="border-b border-neutral-100">
                   <td className="px-4 py-3 font-medium text-neutral-900">{p.name}</td>
                   <td className="px-4 py-3 text-neutral-500">{p.sku}</td>
-                  <td className="px-4 py-3">${p.price.toFixed(2)}</td>
+                  <td className="px-4 py-3">{formatCurrency(p.price)}</td>
                   <td className={`px-4 py-3 ${p.stock <= p.lowStockThreshold ? "text-red-600 font-semibold" : ""}`}>
                     {p.stock}
                   </td>

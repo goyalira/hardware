@@ -3,6 +3,7 @@ import { Package } from "lucide-react";
 import type { Product } from "@/types";
 import { useAppDispatch } from "@/hooks/redux";
 import { addToCart } from "@/store/slices/cartSlice";
+import { formatCurrency } from "@/utils/currency";
 
 export default function ProductCard({ product }: { product: Product }) {
   const dispatch = useAppDispatch();
@@ -42,9 +43,9 @@ export default function ProductCard({ product }: { product: Product }) {
         {product.brand && <span className="text-xs text-neutral-500">{product.brand}</span>}
         <h3 className="line-clamp-2 text-sm font-medium text-neutral-900">{product.name}</h3>
         <div className="mt-auto flex items-center gap-2 pt-2">
-          <span className="text-base font-bold text-neutral-900">${finalPrice.toFixed(2)}</span>
+          <span className="text-base font-bold text-neutral-900">{formatCurrency(finalPrice)}</span>
           {hasDiscount && (
-            <span className="text-sm text-neutral-400 line-through">${product.price.toFixed(2)}</span>
+            <span className="text-sm text-neutral-400 line-through">{formatCurrency(product.price)}</span>
           )}
         </div>
         <span className="text-xs text-neutral-500">

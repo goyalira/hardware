@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { orderApi } from "@/api/services";
 import type { Order, OrderStatus } from "@/types";
+import { formatCurrency } from "@/utils/currency";
 
 const STATUSES: OrderStatus[] = [
   "pending",
@@ -90,7 +91,7 @@ export default function AdminOrders() {
                   <td className="px-4 py-3 text-neutral-600">
                     {typeof o.user === "object" ? o.user.name : o.user}
                   </td>
-                  <td className="px-4 py-3">${o.totalPrice.toFixed(2)}</td>
+                  <td className="px-4 py-3">{formatCurrency(o.totalPrice)}</td>
                   <td className="px-4 py-3">
                     <span
                       className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${

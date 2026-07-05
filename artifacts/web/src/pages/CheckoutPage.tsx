@@ -1,5 +1,5 @@
-
 import { useState } from "react";
+import { formatCurrency } from "@/utils/currency";
 import { useNavigate } from "react-router-dom";
 import { orderApi } from "@/api/services";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
@@ -16,7 +16,7 @@ export default function CheckoutPage() {
     city: "",
     state: "",
     postalCode: "",
-    country: "USA",
+    country: "India",
   });
   const [paymentMethod, setPaymentMethod] = useState("cash_on_delivery");
   const [error, setError] = useState<string | null>(null);
@@ -142,7 +142,7 @@ export default function CheckoutPage() {
             disabled={submitting}
             className="w-full rounded-md bg-orange-500 py-3 font-semibold text-neutral-950 transition hover:bg-orange-400 disabled:opacity-60"
           >
-            {submitting ? "Placing order..." : `Place order · $${total.toFixed(2)}`}
+            {submitting ? "Placing order..." : `Place order · ${formatCurrency(total)}`}
           </button>
         </form>
 
@@ -155,22 +155,22 @@ export default function CheckoutPage() {
                   <span className="text-neutral-600">
                     {i.name} x{i.quantity}
                   </span>
-                  <span>${(i.price * i.quantity).toFixed(2)}</span>
+                  <span>{formatCurrency(i.price * i.quantity)}</span>
                 </li>
               ))}
             </ul>
             <div className="space-y-2 border-t border-neutral-200 pt-3 text-sm">
               <div className="flex justify-between">
                 <span className="text-neutral-500">Subtotal</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>{formatCurrency(subtotal)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-neutral-500">Shipping</span>
-                <span>{shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}</span>
+                <span>{shipping === 0 ? "Free" : formatCurrency(shipping)}</span>
               </div>
               <div className="flex justify-between font-semibold text-neutral-900">
                 <span>Total</span>
-                <span>${total.toFixed(2)}</span>
+                <span>{formatCurrency(total)}</span>
               </div>
             </div>
           </div>

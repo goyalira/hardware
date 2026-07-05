@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { DollarSign, ShoppingBag, Users, Package, AlertTriangle, Clock } from "lucide-react";
 import { adminApi } from "@/api/services";
+import { formatCurrency } from "@/utils/currency";
 
 interface Summary {
   totalRevenue: number;
@@ -20,7 +21,7 @@ export default function AdminDashboard() {
 
   const cards = summary
     ? [
-        { label: "Total revenue", value: `$${summary.totalRevenue.toFixed(2)}`, icon: DollarSign },
+        { label: "Total revenue", value: formatCurrency(summary.totalRevenue), icon: DollarSign },
         { label: "Total orders", value: summary.totalOrders, icon: ShoppingBag },
         { label: "Customers", value: summary.totalCustomers, icon: Users },
         { label: "Products", value: summary.totalProducts, icon: Package },

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Package, CheckCircle2 } from "lucide-react";
 import { orderApi } from "@/api/services";
+import { formatCurrency } from "@/utils/currency";
 import type { Order, OrderStatus } from "@/types";
 
 const STEPS: OrderStatus[] = ["pending", "processing", "shipped", "out_for_delivery", "delivered"];
@@ -80,22 +81,22 @@ export default function OrderDetailPage() {
                   <p className="text-sm font-medium text-neutral-900">{item.name}</p>
                   <p className="text-xs text-neutral-500">Qty {item.quantity}</p>
                 </div>
-                <span className="text-sm font-semibold">${(item.price * item.quantity).toFixed(2)}</span>
+                <span className="text-sm font-semibold">{formatCurrency(item.price * item.quantity)}</span>
               </li>
             ))}
           </ul>
           <div className="mt-4 space-y-1 border-t border-neutral-200 pt-3 text-sm">
             <div className="flex justify-between">
               <span className="text-neutral-500">Subtotal</span>
-              <span>${order.itemsPrice.toFixed(2)}</span>
+              <span>{formatCurrency(order.itemsPrice)}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-neutral-500">Shipping</span>
-              <span>{order.shippingPrice === 0 ? "Free" : `$${order.shippingPrice.toFixed(2)}`}</span>
+              <span>{order.shippingPrice === 0 ? "Free" : formatCurrency(order.shippingPrice)}</span>
             </div>
             <div className="flex justify-between font-semibold text-neutral-900">
               <span>Total</span>
-              <span>${order.totalPrice.toFixed(2)}</span>
+              <span>{formatCurrency(order.totalPrice)}</span>
             </div>
           </div>
         </div>

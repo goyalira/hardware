@@ -5,6 +5,7 @@ import { productApi } from "@/api/services";
 import type { Category, Product } from "@/types";
 import { useAppDispatch } from "@/hooks/redux";
 import { addToCart } from "@/store/slices/cartSlice";
+import { formatCurrency } from "@/utils/currency";
 
 export default function ProductDetailPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -82,9 +83,9 @@ export default function ProductDetailPage() {
           <p className="mb-4 text-xs text-neutral-500">SKU: {product.sku}</p>
 
           <div className="mb-4 flex items-center gap-3">
-            <span className="text-3xl font-bold text-neutral-900">${finalPrice.toFixed(2)}</span>
+            <span className="text-3xl font-bold text-neutral-900">{formatCurrency(finalPrice)}</span>
             {product.discountPrice && (
-              <span className="text-lg text-neutral-400 line-through">${product.price.toFixed(2)}</span>
+              <span className="text-lg text-neutral-400 line-through">{formatCurrency(product.price)}</span>
             )}
             <span className="text-sm text-neutral-500">/ {product.unit}</span>
           </div>
