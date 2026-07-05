@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { orderApi } from "@/api/services";
@@ -9,10 +10,12 @@ export default function CheckoutPage() {
   const navigate = useNavigate();
   const items = useAppSelector((s) => s.cart.items);
   const [form, setForm] = useState({
+    fullName: "",
+    phone: "",
     street: "",
     city: "",
     state: "",
-    zip: "",
+    postalCode: "",
     country: "USA",
   });
   const [paymentMethod, setPaymentMethod] = useState("cash_on_delivery");
@@ -61,6 +64,20 @@ export default function CheckoutPage() {
             <div className="grid gap-3 sm:grid-cols-2">
               <input
                 required
+                placeholder="Full name"
+                value={form.fullName}
+                onChange={(e) => setForm({ ...form, fullName: e.target.value })}
+                className="col-span-2 rounded-md border border-neutral-300 px-3 py-2 text-sm"
+              />
+              <input
+                required
+                placeholder="Phone number"
+                value={form.phone}
+                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                className="col-span-2 rounded-md border border-neutral-300 px-3 py-2 text-sm"
+              />
+              <input
+                required
                 placeholder="Street address"
                 value={form.street}
                 onChange={(e) => setForm({ ...form, street: e.target.value })}
@@ -82,9 +99,9 @@ export default function CheckoutPage() {
               />
               <input
                 required
-                placeholder="ZIP code"
-                value={form.zip}
-                onChange={(e) => setForm({ ...form, zip: e.target.value })}
+                placeholder="Postal code"
+                value={form.postalCode}
+                onChange={(e) => setForm({ ...form, postalCode: e.target.value })}
                 className="rounded-md border border-neutral-300 px-3 py-2 text-sm"
               />
               <input

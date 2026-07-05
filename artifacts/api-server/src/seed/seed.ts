@@ -300,16 +300,17 @@ async function seed() {
         images: [],
       },
     ];
-
-    for (const def of productDefs) {
-      const { category, ...rest } = def;
-      await Product.create({
-        ...rest,
-        slug: slugify(rest.name),
-        category: categories[category],
-        lowStockThreshold: 15,
-      });
-    }
+for (const def of productDefs) {
+  const { category, ...rest } = def;
+  const placeholderImage = `https://placehold.co/600x400?text=${encodeURIComponent(rest.name)}`;
+  await Product.create({
+    ...rest,
+    images: rest.images && rest.images.length > 0 ? rest.images : [placeholderImage],
+    slug: slugify(rest.name),
+    category: categories[category],
+    lowStockThreshold: 15,
+  });
+}
     logger.info(`Seeded ${productDefs.length} products.`);
   }
 

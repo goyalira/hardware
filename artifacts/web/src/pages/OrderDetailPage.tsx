@@ -104,9 +104,13 @@ export default function OrderDetailPage() {
           <div className="rounded-lg border border-neutral-200 bg-white p-5">
             <h2 className="mb-3 font-semibold text-neutral-900">Shipping address</h2>
             <p className="text-sm text-neutral-700">
+              <span className="font-medium">{order.shippingAddress.fullName}</span>
+              <br />
+              {order.shippingAddress.phone}
+              <br />
               {order.shippingAddress.street}
               <br />
-              {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.zip}
+              {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.postalCode}
               <br />
               {order.shippingAddress.country}
             </p>
