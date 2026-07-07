@@ -9,19 +9,16 @@ function generateTrackingNumber(): string {
   return `IP-${Date.now().toString(36).toUpperCase()}-${rand}`;
 }
 
-const SHIPPING_FLAT_RATE = 15;
-const FREE_SHIPPING_THRESHOLD = 250;
+export const SHIPPING_FLAT_RATE = 15;
+export const FREE_SHIPPING_THRESHOLD = 250;
 
-export const createOrder = asyncHandler(async (req: Request, res: Response) => {
-  const { items, shippingAddress, paymentMethod } = req.body ?? {};
+interface RawItem {
+  productId?: string;
+  product?: string;
+  quantity?: number;
+}
 
-  if (!Array.isArray(items) || items.length === 0) {
-    throw new ApiError(400, "Order must include at least one item.");
-  }
-  if (!shippingAddress) {
-    throw new ApiError(400, "Shipping address is required.");
-  }
-
+export async function buildOrderItems(items: RawItem[], { decrementStock }: { decrementStock: boolean }) {
   const orderItems = [];
   let itemsPrice = 0;
 
@@ -46,12 +43,31 @@ export const createOrder = asyncHandler(async (req: Request, res: Response) => {
       quantity,
     });
 
-    product.stock -= quantity;
-    await product.save();
+    if (decrementStock) {
+      product.stock -= quantity;
+      await product.save();
+    }
   }
 
   const shippingPrice = itemsPrice >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FLAT_RATE;
   const totalPrice = itemsPrice + shippingPrice;
+
+  return { orderItems, itemsPrice, shippingPrice, totalPrice };
+}
+
+export const createOrder = asyncHandler(async (req: Request, res: Response) => {
+  const { items, shippingAddress, paymentMethod } = req.body ?? {};
+
+  if (!Array.isArray(items) || items.length === 0) {
+    throw new ApiError(400, "Order must include at least one item.");
+  }
+  if (!shippingAddress) {
+    throw new ApiError(400, "Shipping address is required.");
+  }
+
+  const { orderItems, itemsPrice, shippingPrice, totalPrice } = await buildOrderItems(items, {
+    decrementStock: true,
+  });
 
   const order = await Order.create({
     user: req.user!._id,

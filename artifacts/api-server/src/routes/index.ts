@@ -6,6 +6,7 @@ import productRoutes from "./product.routes";
 import orderRoutes from "./order.routes";
 import userRoutes from "./user.routes";
 import adminRoutes from "./admin.routes";
+import paymentRoutes from "./payment.routes";
 
 const router: IRouter = Router();
 
@@ -18,6 +19,7 @@ v1.use("/products", productRoutes);
 v1.use("/orders", orderRoutes);
 v1.use("/users", userRoutes);
 v1.use("/admin", adminRoutes);
+v1.use("/payments", paymentRoutes);
 
 router.use("/v1", v1);
 

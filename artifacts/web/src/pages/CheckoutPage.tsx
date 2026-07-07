@@ -1,14 +1,21 @@
 import { useState } from "react";
 import { formatCurrency } from "@/utils/currency";
 import { useNavigate } from "react-router-dom";
-import { orderApi } from "@/api/services";
+import { orderApi, paymentApi } from "@/api/services";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import { clearCart } from "@/store/slices/cartSlice";
+
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
 
 export default function CheckoutPage() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const items = useAppSelector((s) => s.cart.items);
+  const user = useAppSelector((s) => s.auth.user);
   const [form, setForm] = useState({
     fullName: "",
     phone: "",
@@ -31,25 +38,87 @@ export default function CheckoutPage() {
     return null;
   }
 
+  function extractErrorMessage(err: unknown): string {
+    const message =
+      typeof err === "object" && err !== null && "response" in err
+        ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+        : undefined;
+    return message ?? "Failed to place order. Please try again.";
+  }
+
+  async function handleCardPayment(orderItems: { productId: string; quantity: number }[]) {
+    const razorpayOrder = await paymentApi.createRazorpayOrder(orderItems);
+
+    const razorpay = new window.Razorpay({
+      key: razorpayOrder.keyId,
+      amount: razorpayOrder.amount,
+      currency: razorpayOrder.currency,
+      order_id: razorpayOrder.razorpayOrderId,
+      name: "IronPoint Hardware",
+      description: "Order payment",
+      prefill: {
+        name: form.fullName,
+        contact: form.phone,
+        email: user?.email,
+      },
+      theme: { color: "#f97316" },
+      handler: async (response: {
+        razorpay_order_id: string;
+        razorpay_payment_id: string;
+        razorpay_signature: string;
+      }) => {
+        try {
+          const order = await paymentApi.verifyRazorpayPayment({
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+            items: orderItems,
+            shippingAddress: form,
+          });
+          dispatch(clearCart());
+          navigate(`/orders/${order._id}`);
+        } catch (err) {
+          setError(extractErrorMessage(err));
+          setSubmitting(false);
+        }
+      },
+      modal: {
+        ondismiss: () => {
+          setSubmitting(false);
+        },
+      },
+    });
+
+    razorpay.on("payment.failed", () => {
+      setError("Payment failed. Please try again.");
+      setSubmitting(false);
+    });
+
+    razorpay.open();
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     setSubmitting(true);
+
+    const orderItems = items.map((i) => ({ productId: i.productId, quantity: i.quantity }));
+
     try {
-      const order = await orderApi.create({
-        items: items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
-        shippingAddress: form,
-        paymentMethod,
-      });
-      dispatch(clearCart());
-      navigate(`/orders/${order._id}`);
+      if (paymentMethod === "card") {
+        await handleCardPayment(orderItems);
+        // submitting stays true until the Razorpay modal closes or succeeds
+      } else {
+        const order = await orderApi.create({
+          items: orderItems,
+          shippingAddress: form,
+          paymentMethod,
+        });
+        dispatch(clearCart());
+        navigate(`/orders/${order._id}`);
+      }
     } catch (err) {
-      const message =
-        typeof err === "object" && err !== null && "response" in err
-          ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
-          : undefined;
-      setError(message ?? "Failed to place order. Please try again.");
-    } finally {
+      setError(extractErrorMessage(err));
       setSubmitting(false);
     }
   }
@@ -118,7 +187,7 @@ export default function CheckoutPage() {
             <div className="space-y-2 text-sm">
               {[
                 { value: "cash_on_delivery", label: "Cash on delivery" },
-                { value: "card", label: "Credit / debit card" },
+                { value: "card", label: "Credit / debit card / UPI / Wallet" },
                 { value: "bank_transfer", label: "Bank transfer" },
               ].map((opt) => (
                 <label key={opt.value} className="flex items-center gap-2">
@@ -142,7 +211,7 @@ export default function CheckoutPage() {
             disabled={submitting}
             className="w-full rounded-md bg-orange-500 py-3 font-semibold text-neutral-950 transition hover:bg-orange-400 disabled:opacity-60"
           >
-            {submitting ? "Placing order..." : `Place order · ${formatCurrency(total)}`}
+            {submitting ? "Processing..." : `Place order · ${formatCurrency(total)}`}
           </button>
         </form>
 

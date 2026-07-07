@@ -110,6 +110,33 @@ export const orderApi = {
   },
 };
 
+
+export interface RazorpayOrderResponse {
+  razorpayOrderId: string;
+  amount: number;
+  currency: string;
+  keyId: string;
+}
+
+export interface VerifyPaymentPayload {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+  items: { productId: string; quantity: number }[];
+  shippingAddress: ShippingAddress;
+}
+
+export const paymentApi = {
+  createRazorpayOrder: async (items: { productId: string; quantity: number }[]) => {
+    const { data } = await api.post<RazorpayOrderResponse>("/payments/razorpay/order", { items });
+    return data;
+  },
+  verifyRazorpayPayment: async (payload: VerifyPaymentPayload) => {
+    const { data } = await api.post<{ order: Order }>("/payments/razorpay/verify", payload);
+    return data.order;
+  },
+};
+
 export const userApi = {
   list: async (params: { search?: string; page?: number; limit?: number } = {}) => {
     const { data } = await api.get("/users", { params });

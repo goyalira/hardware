@@ -46,6 +46,8 @@ export interface IOrder extends Document {
   trackingHistory: ITrackingEvent[];
   isPaid: boolean;
   paidAt?: Date;
+  razorpayOrderId?: string;
+  razorpayPaymentId?: string;
   deliveredAt?: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -69,7 +71,7 @@ const shippingAddressSchema = new Schema<IShippingAddress>(
     city: { type: String, required: true },
     state: { type: String, required: true },
     postalCode: { type: String, required: true },
-    country: { type: String, required: true, default: "USA" },
+    country: { type: String, required: true, default: "India" },
     phone: { type: String, required: true },
   },
   { _id: false },
@@ -120,6 +122,8 @@ const orderSchema = new Schema<IOrder>(
     trackingHistory: { type: [trackingEventSchema], default: [] },
     isPaid: { type: Boolean, default: false },
     paidAt: { type: Date },
+    razorpayOrderId: { type: String },
+    razorpayPaymentId: { type: String },
     deliveredAt: { type: Date },
   },
   { timestamps: true },
