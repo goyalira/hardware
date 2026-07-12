@@ -31,7 +31,7 @@ export default function CheckoutPage() {
   const justOrderedRef = useRef(false);
 
   const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
-  const shipping = subtotal >= 250 || subtotal === 0 ? 0 : 15;
+  const shipping = subtotal >= 999 || subtotal === 0 ? 0 : 99;
   const total = subtotal + shipping;
 
   useEffect(() => {

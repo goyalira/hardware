@@ -9,8 +9,8 @@ function generateTrackingNumber(): string {
   return `IP-${Date.now().toString(36).toUpperCase()}-${rand}`;
 }
 
-export const SHIPPING_FLAT_RATE = 15;
-export const FREE_SHIPPING_THRESHOLD = 250;
+export const SHIPPING_FLAT_RATE = 99;
+export const FREE_SHIPPING_THRESHOLD = 999;
 
 interface RawItem {
   productId?: string;
