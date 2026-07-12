@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { formatCurrency } from "@/utils/currency";
 import { useNavigate } from "react-router-dom";
 import { orderApi, paymentApi } from "@/api/services";
@@ -28,13 +28,19 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState("cash_on_delivery");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const justOrderedRef = useRef(false);
 
   const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
   const shipping = subtotal >= 250 || subtotal === 0 ? 0 : 15;
   const total = subtotal + shipping;
 
+  useEffect(() => {
+    if (items.length === 0 && !justOrderedRef.current) {
+      navigate("/cart");
+    }
+  }, [items.length, navigate]);
+
   if (items.length === 0) {
-    navigate("/cart");
     return null;
   }
 
@@ -75,8 +81,9 @@ export default function CheckoutPage() {
             items: orderItems,
             shippingAddress: form,
           });
-          dispatch(clearCart());
+          justOrderedRef.current = true;
           navigate(`/orders/${order._id}`);
+          dispatch(clearCart());
         } catch (err) {
           setError(extractErrorMessage(err));
           setSubmitting(false);
@@ -114,8 +121,9 @@ export default function CheckoutPage() {
           shippingAddress: form,
           paymentMethod,
         });
-        dispatch(clearCart());
+        justOrderedRef.current = true;
         navigate(`/orders/${order._id}`);
+        dispatch(clearCart());
       }
     } catch (err) {
       setError(extractErrorMessage(err));
