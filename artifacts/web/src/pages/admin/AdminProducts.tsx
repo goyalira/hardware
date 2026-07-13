@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Pencil, Trash2, Plus, X } from "lucide-react";
-import { productApi, categoryApi } from "@/api/services";
+import { Pencil, Trash2, Plus, X, Upload, Loader2 } from "lucide-react";
+import { productApi, categoryApi, uploadApi } from "@/api/services";
 import type { Category, Product } from "@/types";
 import { formatCurrency } from "@/utils/currency";
 
@@ -15,6 +15,7 @@ interface FormState {
   unit: string;
   stock: string;
   isFeatured: boolean;
+  imageUrl: string;
 }
 
 const emptyForm: FormState = {
@@ -28,6 +29,7 @@ const emptyForm: FormState = {
   unit: "each",
   stock: "0",
   isFeatured: false,
+  imageUrl: "",
 };
 
 export default function AdminProducts() {
@@ -38,6 +40,7 @@ export default function AdminProducts() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [error, setError] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   function load() {
     setLoading(true);
@@ -70,10 +73,32 @@ export default function AdminProducts() {
       unit: p.unit,
       stock: String(p.stock),
       isFeatured: p.isFeatured,
+      imageUrl: p.images?.[0] ?? "",
     });
     setEditingId(p._id);
     setError(null);
     setShowForm(true);
+  }
+
+  async function handleImageSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    setError(null);
+    try {
+      const url = await uploadApi.uploadImage(file);
+      setForm((f) => ({ ...f, imageUrl: url }));
+    } catch (err) {
+      const message =
+        typeof err === "object" && err !== null && "response" in err
+          ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+          : undefined;
+      setError(message ?? "Failed to upload image.");
+    } finally {
+      setUploading(false);
+      e.target.value = "";
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -90,6 +115,7 @@ export default function AdminProducts() {
       unit: form.unit,
       stock: Number(form.stock),
       isFeatured: form.isFeatured,
+      images: form.imageUrl ? [form.imageUrl] : [],
     };
     try {
       if (editingId) {
@@ -135,6 +161,36 @@ export default function AdminProducts() {
             </button>
           </div>
           <form onSubmit={handleSubmit} className="grid gap-3 sm:grid-cols-2">
+            <div className="sm:col-span-2">
+              <label className="mb-2 block text-sm font-medium text-neutral-700">Product photo</label>
+              <div className="flex items-center gap-4">
+                <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-md border border-neutral-300 bg-neutral-50">
+                  {form.imageUrl ? (
+                    <img src={form.imageUrl} alt="Product" className="h-full w-full object-cover" />
+                  ) : (
+                    <Upload className="h-6 w-6 text-neutral-300" />
+                  )}
+                </div>
+                <label className="flex cursor-pointer items-center gap-2 rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50">
+                  {uploading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" /> Uploading...
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="h-4 w-4" /> {form.imageUrl ? "Change photo" : "Upload photo"}
+                    </>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageSelect}
+                    disabled={uploading}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            </div>
             <input
               required
               placeholder="Name"
@@ -218,7 +274,8 @@ export default function AdminProducts() {
             {error && <p className="text-sm text-red-600 sm:col-span-2">{error}</p>}
             <button
               type="submit"
-              className="rounded-md bg-neutral-900 py-2.5 text-sm font-semibold text-white hover:bg-orange-500 sm:col-span-2"
+              disabled={uploading}
+              className="rounded-md bg-neutral-900 py-2.5 text-sm font-semibold text-white hover:bg-orange-500 disabled:opacity-60 sm:col-span-2"
             >
               {editingId ? "Save changes" : "Create product"}
             </button>

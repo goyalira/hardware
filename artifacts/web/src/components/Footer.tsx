@@ -8,9 +8,9 @@ export default function Footer() {
           <div>
             <div className="mb-3 flex items-center gap-2">
               <span className="flex h-8 w-8 items-center justify-center rounded bg-orange-500 font-bold text-neutral-950">
-                IP
+                AE
               </span>
-              <span className="text-lg font-bold text-neutral-100">IronPoint</span>
+              <span className="text-lg font-bold text-neutral-100">Arvind Enterprises</span>
             </div>
             <p className="text-sm">
               Hardware and construction supplies for contractors and builders.
@@ -49,14 +49,14 @@ export default function Footer() {
           <div>
             <h4 className="mb-3 text-sm font-semibold text-neutral-200">Contact</h4>
             <ul className="space-y-2 text-sm">
-              <li>1 Foundation Way, Metro City</li>
-              <li>(555) 010-0100</li>
-              <li>support@ironpoint.com</li>
+              <li>Dadabari, Kota, Rajasthan</li>
+              <li>+917877535782</li>
+              
             </ul>
           </div>
         </div>
         <div className="mt-8 border-t border-neutral-800 pt-6 text-xs">
-          &copy; {new Date().getFullYear()} IronPoint Hardware & Construction Supply. All rights reserved.
+          &copy; {new Date().getFullYear()} Arvind Enterprises. All rights reserved.
         </div>
       </div>
     </footer>

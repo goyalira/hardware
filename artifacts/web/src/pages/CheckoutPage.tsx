@@ -60,7 +60,7 @@ export default function CheckoutPage() {
       amount: razorpayOrder.amount,
       currency: razorpayOrder.currency,
       order_id: razorpayOrder.razorpayOrderId,
-      name: "IronPoint Hardware",
+      name: "Arvind Enterprises",
       description: "Order payment",
       prefill: {
         name: form.fullName,

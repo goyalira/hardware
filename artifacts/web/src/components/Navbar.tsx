@@ -28,10 +28,10 @@ export default function Navbar() {
       <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3">
         <Link to="/" className="flex items-center gap-2 shrink-0">
           <span className="flex h-9 w-9 items-center justify-center rounded bg-orange-500 font-bold text-neutral-950">
-            IP
+            AE
           </span>
           <span className="hidden text-lg font-bold tracking-tight sm:inline">
-            IronPoint
+            Arvind Enterprises
           </span>
         </Link>
 

@@ -15,7 +15,7 @@ interface CartState {
   items: CartItem[];
 }
 
-const STORAGE_KEY = "ironpoint_cart";
+const STORAGE_KEY = "Arvind_Enterprises_Cart"; // Changed from "IronPointCart" to "ArvindEnterprisesCart"
 
 function loadCart(): CartItem[] {
   try {

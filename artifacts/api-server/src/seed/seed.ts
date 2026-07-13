@@ -16,16 +16,16 @@ function slugify(text: string): string {
 async function seed() {
   await connectDatabase();
 
-  const existingAdmin = await User.findOne({ email: "admin@ironpoint.com" });
+  const existingAdmin = await User.findOne({ email: "admin@arvindenterprises.com" });
   if (!existingAdmin) {
     await User.create({
       name: "Store Admin",
-      email: "admin@ironpoint.com",
+      email: "admin@arvindenterprises.com",
       password: "Admin123!",
       role: "admin",
       phone: "555-010-0000",
     });
-    logger.info("Created admin user: admin@ironpoint.com / Admin123!");
+    logger.info("Created admin user: admin@arvindenterprises.com / Admin123!");
   }
 
   const categoryDefs = [

@@ -35,9 +35,9 @@ export default function AdminLayout() {
       <aside className="hidden w-60 shrink-0 flex-col border-r border-neutral-200 bg-neutral-950 text-neutral-100 md:flex">
         <Link to="/" className="flex items-center gap-2 px-5 py-5">
           <span className="flex h-8 w-8 items-center justify-center rounded bg-orange-500 font-bold text-neutral-950">
-            IP
+            AE
           </span>
-          <span className="font-bold">IronPoint Admin</span>
+          <span className="font-bold">Arvind Enterprises Admin</span>
         </Link>
         <nav className="flex flex-1 flex-col gap-1 px-3">
           {links.map(({ to, label, icon: Icon, end }) => (

@@ -136,6 +136,16 @@ export const paymentApi = {
     return data.order;
   },
 };
+export const uploadApi = {
+  uploadImage: async (file: File) => {
+    const formData = new FormData();
+    formData.append("image", file);
+    const { data } = await api.post<{ url: string }>("/uploads", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return data.url;
+  },
+};
 
 export const userApi = {
   list: async (params: { search?: string; page?: number; limit?: number } = {}) => {
