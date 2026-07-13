@@ -50,13 +50,23 @@ export default function Footer() {
             <h4 className="mb-3 text-sm font-semibold text-neutral-200">Contact</h4>
             <ul className="space-y-2 text-sm">
               <li>Dadabari, Kota, Rajasthan</li>
-              <li>+917877535782</li>
-              
+              <li>+91 7877535782</li>
             </ul>
           </div>
         </div>
+
         <div className="mt-8 border-t border-neutral-800 pt-6 text-xs">
-          &copy; {new Date().getFullYear()} Arvind Enterprises. All rights reserved.
+          <p>&copy; {new Date().getFullYear()} Arvind Enterprises. All rights reserved.</p>
+          <p className="mt-2">
+            Website built by{" "}
+            <a
+              href="mailto:iragoyal129794@gmail.com"
+              className="text-orange-400 hover:underline"
+            >
+              Ira Goyal
+            </a>
+            {" "}· +91 82338 52517
+          </p>
         </div>
       </div>
     </footer>
